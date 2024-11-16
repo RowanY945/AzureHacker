@@ -1,4 +1,3 @@
-
 name: Deploy Vite App to Azure Blob Storage
 
 on:
@@ -19,7 +18,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20' # Use the appropriate Node.js version
+        node-version: '20'
 
     # Step 3: Install dependencies
     - name: Install dependencies
@@ -31,21 +30,17 @@ jobs:
       run: npm run build
       working-directory: frontend
 
-    # Step 5: Upload build output as an artifact (optional)
+    # Step 5: Upload build artifacts
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build
-        path:  frontend/dist
+        path: frontend/dist
 
+    # Step 6: Deploy to Azure Storage
     - name: Azure CLI script
       uses: azure/cli@v2
       with:
         azcliversion: latest
         inlineScript: |
-          az storage blob upload-batch \
-            --account-name rowany \
-            --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} \
-            --destination '$web' \
-            --source frontend/dist \
-            --overwrite      
+          az storage blob upload-batch --account-name rowany --account-key ${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }} --destination '$web' --source frontend/dist --overwrite true
